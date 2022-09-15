@@ -95,7 +95,7 @@ export default {
       console.log(this.email, this.password, this.confirmPassword);
     },
     formIsValid(){
-      return this.email !== "" && this.password !== "" && this.confirmPassword !=="" && !this.comparePasswordRule && !this.passwordRule()
+      return this.email !== "" && this.password !== "" && this.confirmPassword !=="" && !this.comparePasswordRule() && !this.passwordRule()
     }
   },
 };

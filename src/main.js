@@ -31,6 +31,7 @@ new Vue({
       storageBucket: "dev-meetup-97c52.appspot.com",
       databaseURL: "https://dev-meetup-97c52-default-rtdb.firebaseio.com",
     })
+    this.$store.dispatch('loadedMeetups')
   }
 }).$mount('#app')
 

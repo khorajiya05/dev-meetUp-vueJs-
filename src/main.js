@@ -1,19 +1,22 @@
 // eslint-disable-next-line no-unused-vars
-import Vue, { createAppp } from 'vue'
+import Vue from 'vue'
+import * as firebase from 'firebase/app'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import '@mdi/font/css/materialdesignicons.css'
+
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
-import * as firebase from 'firebase/app'
 import router from './routes'
 import { store } from './store'
 import DateFilter from './filters/date'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import '@mdi/font/css/materialdesignicons.css'
+import AlertCmp from './components/Shared/Alert.vue';
 
 
 
 Vue.config.productionTip = false
 
 Vue.filter('date', DateFilter)
+Vue.component('app-alert', AlertCmp)
 
 new Vue({
   vuetify,
@@ -26,6 +29,7 @@ new Vue({
       authDomain: "dev-meetup-97c52.firebaseapp.com",
       projectId: "dev-meetup-97c52",
       storageBucket: "dev-meetup-97c52.appspot.com",
+      databaseURL: "https://dev-meetup-97c52-default-rtdb.firebaseio.com",
     })
   }
 }).$mount('#app')

@@ -1,63 +1,71 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <v-container class="mt-15">
-    <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
-        <v-card>
-          <v-card-text>
-            <v-container>
-              <form @submit.prevent="onSignup">
-                <v-layout row>
-                  <v-flex xs12>
-                    <v-text-field
-                      color="deep-purple lighten-1"
-                      name="email"
-                      label="mail"
-                      id="email"
-                      v-model="email"
-                      type="email"
-                      :rules="[emailRool]"
-                      required
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout row>
-                  <v-flex>
-                    <v-text-field
-                      name="password"
-                      label="Password"
-                      id="password"
-                      v-model="password"
-                      type="password"
-                      color="deep-purple lighten-1"
-                      :rules=[passwordRule]
-                      required
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout row>
-                  <v-flex>
-                    <v-text-field
-                      name="confirmPassword"
-                      label="Confirm Password"
-                      id="confirmPassword"
-                      v-model="confirmPassword"
-                      type="password"
-                      color="deep-purple lighten-1"
-                      :rules="[comparePasswordRule]"
-                      required
-                    ></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout row>
-                  <v-flex>
-                    <v-btn color="deep-purple lighten-1" type="submit" :disabled="!formIsValid">Sign Up</v-btn>
-                  </v-flex>
-                </v-layout>
-              </form>
-            </v-container>
-          </v-card-text>
-        </v-card>
+  <v-container fluid fill-height>
+    <v-layout align-center justify-center>
+      <v-flex xs12 sm8 md4>
+        <form @submit.prevent="onSignup">
+          <v-card class="elevation-12">
+            <app-alert @dismissed="onDismissed" :text="error" v-if="error" />
+            <v-toolbar dark color="deep-purple lighten-1" v-else>
+              <v-toolbar-title>MeetUp</v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+              <v-text-field
+                prepend-icon="email"
+                color="deep-purple lighten-1"
+                name="email"
+                label="mail"
+                id="email"
+                v-model="email"
+                type="email"
+                :rules="[emailRool]"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                prepend-icon="lock"
+                name="password"
+                label="Password"
+                id="password"
+                v-model="password"
+                type="password"
+                color="deep-purple lighten-1"
+                :rules="[passwordRule]"
+                required
+                autocomplete
+              ></v-text-field>
+
+              <v-text-field
+                prepend-icon="lock"
+                name="confirmPassword"
+                label="Confirm Password"
+                id="confirmPassword"
+                v-model="confirmPassword"
+                type="password"
+                color="deep-purple lighten-1"
+                :rules="[comparePasswordRule]"
+                required
+                autocomplete
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="deep-purple lighten-1"
+                type="submit"
+                :disabled="loading"
+                :loading="loading"
+              >
+                Signup
+                <template v-slot:loading>
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </form>
       </v-flex>
     </v-layout>
   </v-container>
@@ -75,28 +83,52 @@ export default {
   },
   computed: {
     emailRool() {
-      return this.email === "" ? "Email is required" : null;
+      return this.email === "" ? "Email is required" : "";
     },
     passwordRule() {
       return this.password === ""
         ? "Password is required"
         : this.password.length < 8
         ? "Atleast 8 digit of password is required"
-        : null;
+        : "";
     },
     comparePasswordRule() {
       return this.password !== this.confirmPassword
         ? "Passwords do not match"
-        : null;
+        : "";
+    },
+    formIsValid() {
+      return (
+        this.email !== "" && this.password !== "" && this.confirmPassword !== ""
+      );
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    error() {
+      return this.$store.getters.error;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
+  watch: {
+    user(value) {
+      if (value !== null && value !== undefined) {
+        this.$router.push("/");
+      }
     },
   },
   methods: {
     onSignup() {
-      console.log(this.email, this.password, this.confirmPassword);
+      this.$store.dispatch("signUserUp", {
+        email: this.email,
+        password: this.password,
+      });
     },
-    formIsValid(){
-      return this.email !== "" && this.password !== "" && this.confirmPassword !=="" && !this.comparePasswordRule() && !this.passwordRule()
-    }
+    onDismissed() {
+      this.$store.dispatch("clearError");
+    },
   },
 };
 </script>

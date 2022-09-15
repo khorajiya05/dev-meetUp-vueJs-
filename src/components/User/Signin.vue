@@ -1,53 +1,108 @@
 <template>
-
- 
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md4>
-            <v-card class="elevation-12">
-              <v-toolbar dark color="deep-purple lighten-1">
-                <v-toolbar-title>Login form</v-toolbar-title>
-              </v-toolbar>
-              <v-card-text>
-                <v-form>
-                  <v-text-field
-                    color="deep-purple lighten-1"
-                    prepend-icon="person"
-                    name="login"
-                    label="Login"
-                    type="text"
-                    required
-                  ></v-text-field>
-                  <v-text-field
-                    color="deep-purple lighten-1"
-                    id="password"
-                    prepend-icon="lock"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    required
-                  ></v-text-field>
-                </v-form>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="deep-purple lighten-1" to="/">Login</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-
-
+  <v-container fluid fill-height>
+    <v-layout align-center justify-center>
+      <v-flex xs12 sm8 md4>
+        <v-form @submit.prevent="onLogin">
+          <v-card class="elevation-12">
+            <app-alert @dismissed="onDismissed" :text="error" v-if="error" />
+            <v-toolbar dark color="deep-purple lighten-1" v-else>
+              <v-toolbar-title>MeetUp</v-toolbar-title>
+            </v-toolbar>
+            <v-card-text>
+              <v-text-field
+                prepend-icon="email"
+                color="deep-purple lighten-1"
+                name="email"
+                label="mail"
+                id="email"
+                v-model="email"
+                type="email"
+                :rules="[emailRool]"
+                required
+              ></v-text-field>
+              <v-text-field
+                prepend-icon="lock"
+                name="password"
+                label="Password"
+                id="password"
+                v-model="password"
+                type="password"
+                color="deep-purple lighten-1"
+                :rules="[passwordRule]"
+                required
+                autocomplete
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="deep-purple lighten-1"
+                type="submit"
+                :disabled="loading"
+                :loading="loading"
+              >
+                Login
+                <template v-slot:loading>
+                  <span class="custom-loader">
+                    <v-icon light>mdi-cached</v-icon>
+                  </span>
+                </template>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
 export default {
-  name: "SignIn",
-  props: {
-    source: String,
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: "Signup",
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  computed: {
+    emailRool() {
+      return this.email === "" ? "Email is required" : "";
+    },
+    passwordRule() {
+      return this.password === "" ? "Password is required" : "";
+    },
+    formIsValid() {
+      return this.email !== "" && this.password !== "";
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    error() {
+      return this.$store.getters.error;
+    },
+    loading() {
+      return this.$store.getters.loading;
+    },
+  },
+  watch: {
+    user(value) {
+      if (value !== null && value !== undefined) {
+        this.$router.push("/");
+      }
+    },
+  },
+  methods: {
+    onLogin() {
+      this.$store.dispatch("signUserIn", {
+        email: this.email,
+        password: this.password,
+      });
+    },
+    onDismissed() {
+      this.$store.dispatch("clearError");
+    },
   },
 };
 </script>
-
-<style></style>

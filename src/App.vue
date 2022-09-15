@@ -4,7 +4,12 @@
       <v-toolbar color="accent-4 " dense>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" class="d-flex d-sm-none" temporary></v-app-bar-nav-icon>
         <v-toolbar-title>
-          <router-link to="/" tag="span" style="cursor:pointer" class="deep-purple--text lighten-3">Meet Up</router-link>
+          <router-link
+            to="/"
+            tag="span"
+            style="cursor:pointer"
+            class="deep-purple--text lighten-3"
+          >Meet Up</router-link>
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-xs-only">
@@ -46,14 +51,6 @@ export default {
   data() {
     return {
       drawer: false,
-
-      menuItems: [
-        { icon: "supervisor_account", title: "View Meetups", link: "/meetups" },
-        { icon: "room", title: "Organize Meetup", link: "/meetup/new" },
-        { icon: "person", title: "Profile", link: "/profile" },
-        { icon: "face", title: "Sign up", link: "/signup" },
-        { icon: "lock_open", title: "Sign in", link: "/signin" },
-      ],
       group: null,
     };
   },
@@ -62,6 +59,25 @@ export default {
       this.drawer = false;
     },
   },
+  computed:{
+    menuItems(){
+      let  menuItems = [
+        { icon: "face", title: "Sign up", link: "/signup" },
+        { icon: "lock_open", title: "Sign in", link: "/signin" },
+      ];
+      if(this.userIsAuthenticated){
+        menuItems = [
+        { icon: "supervisor_account", title: "View Meetups", link: "/meetups" },
+        { icon: "room", title: "Organize Meetup", link: "/meetup/new" },
+        { icon: "person", title: "Profile", link: "/profile" },
+        ]
+      }   
+      return menuItems
+    },
+    userIsAuthenticated () {
+      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+    }
+  }
 };
 </script>
 
